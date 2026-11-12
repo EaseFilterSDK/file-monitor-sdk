@@ -1,9 +1,85 @@
-# [File Monitor SDK](https://www.easefilter.com/Forums_Files/FileMonitor.htm)
+# EaseFilter File Monitor SDK
+[![Platform](https://img.shields.io/badge/Platform-Windows-blue.svg)]()
+[![Language](https://img.shields.io/badge/Language-C%23%20%7C%20C++%20%7C%20Python%20%7C%20Rust%20%7C%20Java-success.svg)]()
+[![License](https://img.shields.io/badge/License-Commercial-orange.svg)]()
 The File Monitor Filter Driver SDK is a kernel-mode component that runs as part of the Windows executive above the file system. The file system filter driver can intercept requests targeted at a file system or another file system filter driver. By intercepting the request before it reaches its intended target, the filter driver can extend or replace functionality provided by the original target of the request. The EaseFilter file system filter driver can log, observe, modify, or even prevent the I/O operations for one or more file systems or file system volumes.
-
 ![File Monitor](https://www.easefilter.com/images/MonitorFilter.png)
 
-## File I/O Monitor
+## 🌟 Capabilities
+
+Operating as a kernel-mode minifilter driver, the SDK intercepts requests directed at the Windows file system before they reach their intended targets, providing absolute visibility into all file operations:
+
+* **Continuous Data Protection (CDP):** Log file update information in real-time, including write operations with specific byte offsets and lengths.
+* **File Auditing & Compliance:** Intercept file system calls to analyze and log file content for rigorous security auditing.
+* **Access Logging:** Generate comprehensive access logs pinpointing exactly *who* accessed *which* files and *when* (including network users accessing a Windows file server).
+* **SIEM Ready:** Seamlessly export structured JSON event logs to Elastic Stack (ELK), Splunk, and other SIEM platforms for threat hunting and alerting.
+
+## ⚙️ Filter Rules & Flexibility
+
+To ensure optimal performance, the SDK features a highly configurable filtering system. You define rules so the driver only captures the exact activity you care about:
+
+* **Path Filtering:** Use wildcards (e.g., `C:\Data\*.docx`) to monitor specific directories or file types.
+* **Process-Based Filtering:** Include or exclude operations by executable name (e.g., `notepad.exe`) or PID.
+* **User-Based Filtering:** Track operations by specific Windows User Accounts or Security Identifiers (SIDs).
+* **Access Flag Filtering:** Target specific requests like read, write, execute, or create/delete operations.
+
+## 🔍 Logged Event Data
+
+The driver captures a rich set of metadata for every tracked file system event, answering the "who, what, where, and how" of file I/O:
+
+* **Action:** Event Type (Create, Read, Write, Rename, etc.), Timestamp, Result Status.
+* **Actor Identification:** ThreadId, ProcessId, ProcessName, UserName, UserDomain.
+* **File Context:** FilePath, FileAttributes, FileSize, DesiredAccess, IsDirectory.
+* **I/O Context:** Byte Offset, Read/Write Length, and (optionally) the raw transferred data bytes.
+
+## 💻 Quick Start Example (C#)
+
+The SDK provides extensive pre-built templates for C#, C++, Python, Rust, and Java. Here is a basic example of initializing the filter and hooking into a pre-write event to monitor file modifications:
+
+```csharp
+using System;
+using EaseFilter.FilterControl;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Starting EaseFilter File Monitor...");
+        FilterControl filter = new FilterControl();
+        
+        // Create a filter rule targeting a specific directory
+        FileFilterRule rule = new FileFilterRule(@"C:\SensitiveData\*");
+        rule.AccessFlags = AccessFlag.ALLOW_MAX_ACCESS; 
+        
+        // Register callbacks
+        rule.OnPreWriteFile += OnPreWriteFile;
+        filter.AddFileFilter(rule);
+        
+        // Start the kernel driver
+        if (!filter.StartFiltering())
+        {
+            Console.WriteLine("Failed to start filter: " + FilterAPI.GetLastErrorMessage());
+            return;
+        }
+        
+        Console.WriteLine("Filter started. Press Enter to exit.");
+        Console.ReadLine();
+        filter.StopFiltering();
+    }
+
+    // Callback fired directly from the kernel before a write occurs
+    static void OnPreWriteFile(object sender, WriteFileEventArgs e)
+    {
+        Console.WriteLine($"[WRITE DETECTED] User {e.UserName} in {e.ProcessName} is modifying {e.FileName}");
+        
+        // Example: You can actively block unauthorized writes by changing the return status
+        // e.ReturnStatus = NtStatus.StatusAccessDenied;
+        // e.FilterReply.ReturnMessage = "Blocked by security policy.";
+    }
+}
+```
+
+## A C# File I/O Monitor Example
 The file I/O monitor can audit file access and change in Windows in Real-Time. With the file monitor you can monitor the file activities on file system level, capture file open, create, overwrite, read, write, query file information, set file information, query security information, set security information, file rename, file delete, directory browsing and file close I/O requests. You can create the file access log, you will know who, when, what files were accessed. You can get comprehensive control and visibility over users and data by tracking and monitoring all the user & file activities, permission changes, storage capacity and generate real-time audit reports.
 
 ### Monitor the file changed I/O by registering the file change events.
