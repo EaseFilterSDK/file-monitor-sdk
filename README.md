@@ -1,8 +1,11 @@
 # EaseFilter File Monitor SDK
+
 [![Platform](https://img.shields.io/badge/Platform-Windows-blue.svg)]()
 [![Language](https://img.shields.io/badge/Language-C%23%20%7C%20C++%20%7C%20Python%20%7C%20Rust%20%7C%20Java-success.svg)]()
 [![License](https://img.shields.io/badge/License-Commercial-orange.svg)]()
+
 The File Monitor Filter Driver SDK is a kernel-mode component that runs as part of the Windows executive above the file system. The file system filter driver can intercept requests targeted at a file system or another file system filter driver. By intercepting the request before it reaches its intended target, the filter driver can extend or replace functionality provided by the original target of the request. The EaseFilter file system filter driver can log, observe, modify, or even prevent the I/O operations for one or more file systems or file system volumes.
+
 ![File Monitor](https://www.easefilter.com/images/MonitorFilter.png)
 
 ## 🌟 Capabilities
@@ -168,6 +171,17 @@ Here is the output from the file monitor example.
 * [Filter Driver Developer Guide](https://www.easefilter.com/kb/DeveloperGuide.htm)
 * [MiniFilter Filter Driver Framework](https://www.easefilter.com/kb/minifilter-framework.htm)
 * [Isolation Filter Driver](https://www.easefilter.com/kb/Isolation_Filter_Driver.htm)
+
+## License
+
+This repository contains two distinct licensing categories:
+
+1. **Wrapper/Implementation Code (MIT License):** 
+   The source code, scripts, and configuration files provided directly in this repository are licensed under the [MIT License](LICENSE). You are free to modify, distribute, and use this specific integration code.
+
+2. **EaseFilter SDK (Commercial License):**
+   This project requires the EaseFilter SDK (including its binaries, filter drivers, and core libraries) to function. The EaseFilter SDK is **proprietary commercial software** and is strictly excluded from the MIT License.   
+   To use the EaseFilter SDK for commercial purposes or in a production environment, you must obtain a valid commercial license directly from [EaseFilter](https://www.easefilter.com/license.pdf).
 
 ## Support
 If you have questions or need help, please contact support@easefilter.com 
